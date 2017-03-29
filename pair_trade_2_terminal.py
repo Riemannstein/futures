@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In[ ]:
@@ -167,6 +166,9 @@ else:
 #profit_multi = np.zeros(len(ma_len)*len(std_dev_len)*len(std_dev_coeff)*len(sl_coeff)).reshape(len(ma_len),len(std_dev_len),len(std_dev_coeff),len(sl_coeff))
 profit_multi = np.array([])
 
+# Define multi-dimensional array to save for win rate
+win_multi = np.array([])
+
 # Iterate over all parameters. Index: 0: ma_len; 1: std_dev_len; 2: std_dev_coeff; 3: sl_coeff
 
 for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
@@ -180,6 +182,7 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
     comm_rate = 1e-4 # commission rate
     unit = 10 # ton/contract, trading unit
     t_c = int(0) # Trade counter that records the number of trades
+    t_c_win = int(0) # Trade counter that records the number of winning trades
     profit_series = np.array([]) # net profit series
     book_series = np.array([]) # book value series
     ma_series = np.zeros(n_t) # moving average series
@@ -298,6 +301,10 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
                 # Calculate the single profit 
                 profit = price_t[i] -state
                 print("Single trade profit is ", profit)
+                
+                # If earned positive profit, update the win counter
+                if profit > 0:
+                    t_c_win += 1
 
                 # Store the buy sell information
                 bs_price[period] = price_t[i]
@@ -337,6 +344,10 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
                 # Calculate the single profit 
                 profit = state - price_t[i]
                 print("Single trade profit is ", profit)
+                
+                # If eared positive profit, update the win counter
+                if profit > 0:
+                    t_c_win += 1
 
                 # Store the buy sell information
                 bs_price[period] = price_t[i]
@@ -511,5 +522,3 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
 
 #profit_multi = profit_multi.reshape(len(ma_len),len(std_dev_len),len(std_dev_coeff),len(sl_coeff))
 np.savetxt("pair_trade_2_profit_multi.txt", profit_multi)
-
-
