@@ -63,26 +63,7 @@ def lower(m, std_dev, std_dev_coeff):
     return m-std_dev_coeff*std_dev
 
 # Debugging mode: 1
-debug = 0
-
-## Name of the sectors 
-#sec_1_str = "PM"
-#sec_2_str = "WH"
-
-## Getting the data for main contract
-#sec_1 = DataAPI.MktMFutdGet(tradeDate=u"",mainCon=u"1",contractMark=u"",contractObject=sec_1_str,startDate=u"",endDate=u"",field=u"",pandas="1")
-#sec_2 = DataAPI.MktMFutdGet(tradeDate=u"",mainCon=u"1",contractMark=u"",contractObject=sec_2_str,startDate=u"",endDate=u"",field=u"",pandas="1")
-
-## Drop the rows where "closePrice" is NaN
-#sec_1 = sec_1.dropna(subset=["closePrice"])
-#sec_2 = sec_2.dropna(subset=["closePrice"])
-
-## Sort rows by "tradeDate" column
-#sec_1 = sec_1.sort("tradeDate")
-#sec_2 = sec_2.sort("tradeDate")
-
-## Inner join the two dataframes
-#sec_12 = pd.merge(sec_1, sec_2, on="tradeDate")
+debug = 1
 
 # Sort the merged dataframes by "tradeDate"
 sec_12 = pd.read_csv("sec_12.csv", encoding = "GBK")
@@ -169,6 +150,12 @@ profit_multi = np.array([])
 # Define multi-dimensional array to save for win rate
 win_multi = np.array([])
 
+# Define the multi-dimensional array to save for standard deviation for net profit
+profit_std_dev_multi = np.array([])
+
+# Define the multi-dimensional array to save for max_drawdown for each set of parameters
+max_drawdown_multi = np.array([])
+
 # Iterate over all parameters. Index: 0: ma_len; 1: std_dev_len; 2: std_dev_coeff; 3: sl_coeff
 
 for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
@@ -186,6 +173,7 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
     profit_series = np.array([]) # net profit series
     book_series = np.array([]) # book value series
     ma_series = np.zeros(n_t) # moving average series
+    drawdown_series = np.zeros(n_t) # drawdown series
     std_dev_series = np.zeros(n_t) # standard deviation series
     bs = np.zeros(len(price_t)) # mark buy any sell
     period = int(0) # variable to store period information
@@ -519,6 +507,26 @@ for x in itertools.product(ma_len, std_dev_len, std_dev_coeff, sl_coeff):
     
     # Save the profit for this set of parameters
     profit_multi = np.hstack((profit_multi, profit_series[-1]))
+    
+    # Save the winning rate for this set of parameters
+    if t_c > 0:
+        win_multi = np.hstack((win_multi, float(t_c_win)/float(t_c)))
+    else:
+        win_multi = np.hstack((win_multi, 0.0))
+        
+    # Save the standard deviation of the profot for this set of parameters
+    profit_std_dev_multi = np.hstack((profit_std_dev_multi, std_dev(profit_series)))
+    
+    # Compute the drawdown series
+    for i in range(n_t):
+        drawdown_series[i] = profit_series[i] - profit_series[i:].min()
+        
+    # Store the maximum drawdown for this set of parameters
+    max_drawdown_multi = np.hstack((max_drawdown_multi, drawdown_series.max()))
+    
 
 #profit_multi = profit_multi.reshape(len(ma_len),len(std_dev_len),len(std_dev_coeff),len(sl_coeff))
 np.savetxt("pair_trade_2_profit_multi.txt", profit_multi)
+np.savetxt("pair_trade_2_win_multi.txt", win_multi)
+np.savetxt("pair_trade_2_profit_std_dev_multi.txt", profit_std_dev_multi)
+np.savetxt("pair_trade_2_max_drawdown_multi", max_drawdown_multi)
