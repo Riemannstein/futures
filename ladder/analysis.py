@@ -24,6 +24,14 @@ for i in range(len(profit_tick)):
 		profit_before[i] = profit_tick[i]
 	else:
 		profit_before[i] = profit_before[i-1] + profit_tick[i]
+		
+# Get the spread series
+spread1 = df.askPrice1 - df.bidPrice1
+
+for e in spread1:
+	if e == 15:
+		print(e)
+
 
 # Setting data length according to debugging mode
 if debug == 1:
@@ -83,5 +91,11 @@ plt.plot(book, linewidth = 0.3)
 plt.savefig("./plot/book.eps", format="eps")
 plt.close()
 
-print(position_stack)
+# Plot the net profit series after closing positions
+plt.xlabel("Tick")
+plt.ylabel("Bid ask spread")
+plt.plot(spread1, linewidth = 0.3)
+plt.savefig("./plot/spread1.eps", format="eps")
+plt.close()
+
 
