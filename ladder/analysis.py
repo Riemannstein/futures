@@ -110,8 +110,8 @@ plt.close()
 #plt.close()
 
 # Plot book and last price
-df.lastPrice.plot(secondary_y=True)
-df.book.plot()
+df.lastPrice.plot(secondary_y=True, legend=True, label = "Last price")
+df.book.plot(legend=True, label = "Book value")
 plt.savefig("./plot/price_book.eps", format="eps")
 plt.close()
 
