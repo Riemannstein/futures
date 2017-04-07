@@ -16,7 +16,8 @@ book = np.loadtxt("./data/book.txt")
 cum_profit = sum(profit_tick) # cumulative profit from ticks
 profit_before = np.zeros(len(df))
 
-
+# Add columns to dataframe
+df["book"] = pd.Series(book, index=df.index)
 
 # Compute the cumulative profit series for each tick
 for i in range(len(profit_tick)):
@@ -98,18 +99,21 @@ plt.plot(spread1, linewidth = 0.3)
 plt.savefig("./plot/spread1.eps", format="eps")
 plt.close()
 
-# Plot price and book series together
-plt.subplot(2,1,1)
-plt.plot(df.lastPrice,linewidth=0.1)
-plt.xlabel("Tick")
-plt.subplot(2,1,2)
-plt.plot(book, linewidth=0.1)
+## Plot price and book series together
+#plt.subplot(2,1,1)
+#plt.plot(df.lastPrice,linewidth=0.1)
+#plt.ylabel("Last price")
+#plt.subplot(2,1,2)
+#plt.plot(book, linewidth=0.1)
+#plt.ylabel("Book value")
+#plt.savefig("./plot/price_book.eps", format="eps")
+#plt.close()
+
+# Plot book and last price
+df.lastPrice.plot(secondary_y=True)
+df.book.plot()
 plt.savefig("./plot/price_book.eps", format="eps")
 plt.close()
-
-df.lastPrice.plot(secondary_y=True)
-plt.plot(book)
-plt.show()
 
 #lastPrice = df.lastPrice.as_matrix()
 #print(lastPrice[0:10])
