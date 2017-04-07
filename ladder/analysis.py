@@ -98,4 +98,21 @@ plt.plot(spread1, linewidth = 0.3)
 plt.savefig("./plot/spread1.eps", format="eps")
 plt.close()
 
+# Plot price and book series together
+plt.subplot(2,1,1)
+plt.plot(df.lastPrice,linewidth=0.1)
+plt.xlabel("Tick")
+plt.subplot(2,1,2)
+plt.plot(book, linewidth=0.1)
+plt.savefig("./plot/price_book.eps", format="eps")
+plt.close()
 
+df.lastPrice.plot(secondary_y=True)
+plt.plot(book)
+plt.show()
+
+#lastPrice = df.lastPrice.as_matrix()
+#print(lastPrice[0:10])
+#print(type(df.lastPrice.as_matrix()))
+#print(type(df.iloc[:]["lastPrice"]))
+#print(type(df.iloc[:].lastPrice))

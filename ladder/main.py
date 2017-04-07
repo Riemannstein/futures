@@ -17,7 +17,7 @@ df = df.iloc[2:]
 
 
 if debug == 1:
-	data_len = 5
+	data_len = 100
 else:
 	data_len = len(df)
 	
@@ -37,9 +37,14 @@ commission = np.zeros(len(df)) # commission for each trade
 unit = int(5)  # ton/contract
 
 
+# Get the spread series
+spread1 = df.iloc[0:]["askPrice1"] - df.iloc[0:]["bidPrice1"]
+
+print(type(spread1[3]))
 for i in range(data_len):
 	# For the first period, just set my bid and ask
 	print("\nData time is ", df.iloc[i]["dataTime"])
+	
 	if i == 0:
 		# Initialize the book value of the first tick
 		book[i] = 0 
@@ -53,15 +58,30 @@ for i in range(data_len):
 		print("My bid price at time", df.iloc[i]["dataTime"], " is ", my_bid)
 		print("My ask price at time", df.iloc[i]["dataTime"], " is ", my_ask)
 	else:
+		#if (df.iloc[i-1]["askPrice1"] - df.iloc[i-1]["bidPrice1"]) > minPriceChange:
+			#if len(position_stack) != 0:
+				#if position_stack[-1] > 0: 
+					#my_bid = df.iloc[i-1]["bidPrice1"] 
+					#my_ask = df.iloc[i-1]["askPrice1"] - minPriceChange
+				#elif position_stack[-1] < 0:
+					#my_ask = df.iloc[i-1]["askPrice1"]
+					#my_bid = df.iloc[i-1]["bidPrice1"] + minPriceChange
+			#else:
+				#my_bid = df.iloc[i-1]["bidPrice1"] 
+				#my_ask = df.iloc[i-1]["askPrice1"] 				
+		#else:
+			#my_bid = df.iloc[i]["bidPrice1"] 
+			#my_ask = df.iloc[i]["askPrice1"] 		
+				
 		my_bid = df.iloc[i-1]["bidPrice1"] 
-		my_ask = df.iloc[i-1]["askPrice1"] 		
+		my_ask = df.iloc[i-1]["askPrice1"] 						
 		print("My bid price at previous tick is ", my_bid)
 		print("My ask price at previous tick is ", my_ask)
 		print("Last price of the current tick is", df.iloc[i]["lastPrice"])
 		print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
 		print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])		
 		
-		if df.iloc[i]["bidPrice1"]  > my_ask or \
+		if df.iloc[i]["askPrice1"]  > my_ask or \
 		 ( df.iloc[i]["lastPrice"] > my_ask and df.iloc[i]["volume"] != df.iloc[i-1]["volume"]):
 			
 			# Record short position
