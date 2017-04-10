@@ -6,7 +6,10 @@ ticker = "al1705" # contract symbol
 minPriceChange = 5.0 # minimum price change for the contract
 
 # debug mode: 1
-debug = 1
+debug = 0
+
+plot_start =0
+plot_end = 500
 
 k = int(1) # times of minimum price change
 
@@ -16,7 +19,7 @@ df = pd.read_csv(ticker+".csv", encoding = "GBK")
 # Delete the first two rows
 df = df.iloc[2:]
 
-spread = 
+my_spread =  k*minPriceChange
 
 # Setting data length according to debugging mode
 if debug == 1:

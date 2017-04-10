@@ -5,12 +5,6 @@ import itertools
 from param import *
 
 
-# Read the data
-df = pd.read_csv(ticker+".csv", encoding = "GBK")
-
-# Delete the first two rows
-df = df.iloc[2:]
-
 
 	
 # Initialize bid and ask state
@@ -28,23 +22,22 @@ commission = np.zeros(len(df)) # commission for each trade
 unit = int(5)  # ton/contract
 profit = int(0) # Record single trade profit
 book_stack = int(0) # Record the book value on the positions held
+position_stack_len = np.zeros(len(df), dtype="int") # Signed length of position_stack
 
 
 # Get the spread series
-spread1 = df.iloc[0:]["askPrice1"] - df.iloc[0:]["bidPrice1"]
+spread1 = df.iloc[0:]["askPrice1"].as_matrix() - df.iloc[0:]["bidPrice1"].as_matrix()
+print("My spread is ", my_spread)
 
-print(type(spread1[3]))
+
 for i in range(data_len):
 	# For the first period, just set my bid and ask
-	print("Tick number ",i)
-	print("\nData time is ", df.iloc[i]["dataTime"])
+	print("\nTick number ",i)
+	print("Data time is ", df.iloc[i]["dataTime"])
 	
 	if i == 0:
 		# Initialize the book value of the first tick
 		book[i] = 0 
-		
-		# Intialize the stack length series
-		#stack_len[i] = 0
  		
 		# Place limited orders
 		my_bid = df.iloc[i]["bidPrice1"] 
@@ -54,29 +47,13 @@ for i in range(data_len):
 		print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
 		print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
 		
-	else:
-		#if (df.iloc[i-1]["askPrice1"] - df.iloc[i-1]["bidPrice1"]) > minPriceChange:
-			#if len(position_stack) != 0:
-				#if position_stack[-1] > 0: 
-					#my_bid = df.iloc[i-1]["bidPrice1"] 
-					#my_ask = df.iloc[i-1]["askPrice1"] - minPriceChange
-				#elif position_stack[-1] < 0:
-					#my_ask = df.iloc[i-1]["askPrice1"]
-					#my_bid = df.iloc[i-1]["bidPrice1"] + minPriceChange
-			#else:
-				#my_bid = df.iloc[i-1]["bidPrice1"] 
-				#my_ask = df.iloc[i-1]["askPrice1"] 				
-		#else:
-			#my_bid = df.iloc[i]["bidPrice1"] 
-			#my_ask = df.iloc[i]["askPrice1"] 		
-				
-		my_bid = df.iloc[i-1]["bidPrice1"] 
-		my_ask = df.iloc[i-1]["askPrice1"] 						
+	else:	
+										
 		print("My bid price at previous tick is ", my_bid)
 		print("My ask price at previous tick is ", my_ask)
-		print("Last price of the current tick is", df.iloc[i]["lastPrice"])
 		print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
-		print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])		
+		print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
+		print("Last price of the current tick is", df.iloc[i]["lastPrice"])	
 		
 		if df.iloc[i]["askPrice1"]  > my_ask or \
 		 ( df.iloc[i]["lastPrice"] > my_ask and df.iloc[i]["volume"] != df.iloc[i-1]["volume"]):
@@ -92,6 +69,9 @@ for i in range(data_len):
 			if len(position_stack) == 0:
 				position_stack = np.hstack((position_stack, -my_ask))
 				
+				## Reset Limited order (a)
+				#my_bid = df.iloc[i]["bidPrice1"] 
+				#my_ask = df.iloc[i]["askPrice1"] 				
 				
 			# If previously long
 			elif position_stack[-1] > 0:
@@ -100,17 +80,24 @@ for i in range(data_len):
 				profit = my_ask - position_stack[-1]
 				cum_profit += profit
 				print("Single profit is ", profit)
-
+				
+				## Reset limited order (a)
+				#my_bid = df.iloc[i]["bidPrice1"]
+				#my_ask = my_bid + my_spread
+				
 				# Pop back
 				position_stack = np.delete(position_stack,-1)
-				
-				
 				
 			# If previously short
 			elif position_stack[-1] < 0:
 				# Append 
 				position_stack = np.hstack((position_stack, -my_ask))
 				print("Append short position: ", -my_ask)
+				
+				## Reset limited order (a)
+				#my_ask = df.iloc[i]["askPrice1"]
+				#my_bid = my_ask - my_spread			
+
 						
 		elif df.iloc[i]["bidPrice1"] < my_bid or \
 		 (df.iloc[i]["lastPrice"] < my_bid and df.iloc[i]["volume"] != df.iloc[i-1]["volume"]):
@@ -126,6 +113,10 @@ for i in range(data_len):
 			if len(position_stack) == 0:
 				position_stack = np.hstack((position_stack, my_bid))
 				
+				## Reset limited order (a)
+				#my_bid = df.iloc[i]["bidPrice1"] 
+				#my_ask = df.iloc[i]["askPrice1"] 
+				
 			# If previously short
 			elif position_stack[-1] < 0:
 				# Calculate the profit
@@ -133,7 +124,10 @@ for i in range(data_len):
 				profit = -my_bid - position_stack[-1]
 				print("Single profit is ", profit)
 				cum_profit += profit
-
+				
+				## Reset limited order (a)
+				#my_bid = df.iloc[i]["bidPrice1"]
+				#my_ask = my_bid + my_spread
 				
 				# Pop back
 				position_stack = np.delete(position_stack,-1)
@@ -143,9 +137,36 @@ for i in range(data_len):
 				# Append 
 				position_stack = np.hstack((position_stack, my_bid))
 				print("Append long position: ", my_bid)
+				
+				## Reset limited order (a)
+				#my_ask = df.iloc[i]["askPrice1"]
+				#my_bid = my_ask - my_spread	
+				
+		## Place limited orders (b)
+		#if len(position_stack) == 0: 
+			#my_bid = df.iloc[i]["bidPrice1"] 
+			#my_ask = df.iloc[i]["askPrice1"] 
+		#elif position_stack[-1] > 0:
+			#my_bid = df.iloc[i]["bidPrice1"]
+			#my_ask = my_bid + my_spread
+		#elif position_stack[-1] < 0:
+			#my_ask = df.iloc[i]["askPrice1"]
+			#my_bid = my_ask - my_spread
 		
-		## Record the stack length 
-		#stack_len[i] = len(position_stack)
+		## Place limited orders (c)
+		#if spread1[i] <= 5:		
+			#my_bid = df.iloc[i]["bidPrice1"] - k*minPriceChange
+			#my_ask = df.iloc[i]["askPrice1"] + k*minPriceChange
+		#else:
+			#my_bid = df.iloc[i]["bidPrice1"]
+			#my_ask = df.iloc[i]["askPrice1"] 
+			
+		# Place limited orders (c)
+		my_bid = df.iloc[i]["bidPrice1"]
+		my_ask = df.iloc[i]["askPrice1"] 		
+		
+
+
 				
 		# Update the book series
 		# If not holding any position
@@ -169,6 +190,14 @@ for i in range(data_len):
 		
 		# Print the cumulative tick profit
 		print("Cumulative tick profit is ", cum_profit)
+		
+		# Compute the signed length of the position_stack
+		if len(position_stack) == 0:
+			position_stack_len[i] = 0
+		elif position_stack[-1] > 0:
+			position_stack_len[i] = len(position_stack)
+		elif position_stack[-1] < 0:
+			position_stack_len[i] = -len(position_stack)
 			
 	if debug == 1:
 		print("Position stack is ", position_stack)
@@ -188,9 +217,10 @@ np.savetxt("./data/profit_tick.txt", profit_tick)
 np.savetxt("./data/book.txt", book)
 np.savetxt("./data/short_position.txt", short_position)
 np.savetxt("./data/long_position.txt", long_position)
+np.savetxt("./data/position_stack_len.txt", position_stack_len)
 
 	
-print("The cumulative profit is ", cum_profit)
+print("The cumulative tick profit is ", cum_profit)
 print("Position stack is ", position_stack)
 if debug == 1:			
 	print(df.tail(5)["dataTime"])
