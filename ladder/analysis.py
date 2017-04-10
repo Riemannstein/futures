@@ -4,15 +4,17 @@ import numpy as np
 import itertools
 from param import *
 
-# Load the raw data
-df = pd.read_csv(ticker+".csv", encoding = "GBK")
-# Delete the first two rows
-df = df.iloc[2:]
+## Load the raw data
+#df = pd.read_csv(ticker+".csv", encoding = "GBK")
+## Delete the first two rows
+#df = df.iloc[2:]
 
 # Load additional data
-position_stack = np.loadtxt("./data/position_stack.txt")
+position_stack = np.loadtxt("./data/position_stack.txt", ndmin = 1)
 profit_tick = np.loadtxt("./data/profit_tick.txt")
 book = np.loadtxt("./data/book.txt")
+long_position = np.loadtxt("./data/long_position.txt")
+short_position = np.loadtxt("./data/short_position.txt")
 cum_profit = sum(profit_tick) # cumulative profit from ticks
 profit_before = np.zeros(len(df))
 
@@ -32,15 +34,12 @@ spread1 = df.askPrice1 - df.bidPrice1
 for e in spread1:
 	if e == 15:
 		print(e)
-
-
-# Setting data length according to debugging mode
-if debug == 1:
-	data_len = 5
-else:
-	data_len = len(df)
-	
-close_profit = np.zeros(len(position_stack))
+print(type(position_stack))
+print(position_stack)
+print(len(np.array([1,2,3])))
+print(type(np.array([1,2,3])))
+print(len(position_stack))
+close_profit = np.zeros(position_stack.size)
 
 # Calculate the profit for closing positions at the end of the day
 for i in range(len(position_stack)):
@@ -65,37 +64,37 @@ print("Number of naked positions is ", len(position_stack))
 # Plot the price series
 plt.xlabel("Tick")
 plt.ylabel("Lase price")
-plt.plot(df.lastPrice)
-plt.plot(df.askPrice1)
-plt.plot(df.bidPrice1)
+plt.plot(df.lastPrice[0:data_len])
+plt.plot(df.askPrice1[0:data_len])
+plt.plot(df.bidPrice1[0:data_len])
 plt.savefig("./plot/lastPrice.eps", format="eps")
 plt.close()
 
 # Plot the net profit series before closing positions
 plt.xlabel("Tick")
 plt.ylabel("Net proftit before closing positions")
-plt.plot(profit_before, linewidth = 0.3)
+plt.plot(profit_before[0:data_len], linewidth = 0.3)
 plt.savefig("./plot/profit_before.eps", format="eps")
 plt.close()
 
 # Plot the net profit series after closing positions
 plt.xlabel("Tick")
 plt.ylabel("Net profit after closing positions")
-plt.plot(profit_after, linewidth = 0.3)
+plt.plot(profit_after[0:data_len], linewidth = 0.3)
 plt.savefig("./plot/profit_after.eps", format="eps")
 plt.close()
 
 # Plot the net profit series before closing positions
 plt.xlabel("Tick")
 plt.ylabel("Book series")
-plt.plot(book, linewidth = 0.3)
+plt.plot(book[0:data_len], linewidth = 0.3)
 plt.savefig("./plot/book.eps", format="eps")
 plt.close()
 
 # Plot the net profit series after closing positions
 plt.xlabel("Tick")
 plt.ylabel("Bid ask spread")
-plt.plot(spread1, linewidth = 0.3)
+plt.plot(spread1[data_len], linewidth = 0.3)
 plt.savefig("./plot/spread1.eps", format="eps")
 plt.close()
 
@@ -110,8 +109,8 @@ plt.close()
 #plt.close()
 
 # Plot book and last price
-df.lastPrice.plot(secondary_y=True, legend=True, label = "Last price")
-df.book.plot(legend=True, label = "Book value")
+df.lastPrice[0:data_len].plot(secondary_y=True, legend=True, label = "Last price")
+df.book[0:data_len].plot(legend=True, label = "Book value")
 plt.savefig("./plot/price_book.eps", format="eps")
 plt.close()
 
