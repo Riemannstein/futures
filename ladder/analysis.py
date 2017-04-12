@@ -28,6 +28,7 @@ for i in range(len(profit_tick)):
 		
 # Get the spread series
 spread1 = df.askPrice1 - df.bidPrice1
+print(type(spread1))
 
 for e in spread1:
 	if e == 15:
