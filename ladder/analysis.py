@@ -9,9 +9,8 @@ from param import *
 position_stack = np.loadtxt("./data/position_stack.txt", ndmin = 1)
 profit_tick = np.loadtxt("./data/profit_tick.txt")
 book = np.loadtxt("./data/book.txt")
-long_position = np.loadtxt("./data/long_position.txt")
-short_position = np.loadtxt("./data/short_position.txt")
 position_stack_len = np.loadtxt("./data/position_stack_len.txt")
+profit_tick_ba = np.loadtxt("./data/profit_tick_ba.txt")
 cum_profit = sum(profit_tick) # cumulative profit from ticks
 profit_before = np.zeros(len(df))
 
@@ -22,9 +21,9 @@ df["position_stack_len"] = pd.Series(position_stack_len, index=df.index)
 # Compute the cumulative profit series for each tick
 for i in range(len(profit_tick)):
 	if i == 0:
-		profit_before[i] = profit_tick[i]
+		profit_before[i] = profit_tick[i] + profit_tick_ba[i]
 	else:
-		profit_before[i] = profit_before[i-1] + profit_tick[i]
+		profit_before[i] = profit_before[i-1] + profit_tick[i] + profit_tick_ba[i]
 		
 # Get the spread series
 spread1 = df.askPrice1 - df.bidPrice1
