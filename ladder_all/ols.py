@@ -24,15 +24,15 @@ profit_normalized = np.divide(profit_array, open_price_array)
 # Plot the buy, sell information
 for i in range(len(profit_array)):
 	plt.scatter(stv_to_disp[i], profit_normalized[i], color="r")
-	plt.xlabel("Total variation")
-	plt.ylabel("Profit / openPrice")
+	plt.xlabel("Total variation (20170413)")
+	plt.ylabel("Profit / openPrice (20170414)")
 plt.savefig("profit_normalized_to_indicator_"+data_date+".eps", format="eps")
 plt.close()
 
 # Plot the buy, sell information
 for i in range(len(profit_array)):
 	plt.scatter(stv_to_disp[i], profit_array[i], color="r")
-	plt.xlabel("Total variation")
-	plt.ylabel("Profit")
+	plt.xlabel("Total variation (20170413)")
+	plt.ylabel("Profit (20170414)")
 plt.savefig("profit_to_indicator_"+data_date+".eps", format="eps")
 plt.close()
