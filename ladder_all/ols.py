@@ -19,8 +19,11 @@ tv_to_disp_array = np.loadtxt("tv_to_disp_array_"+data_date_before+".txt")
 # Compute the normalized profit array
 profit_normalized = np.divide(profit_array, open_price_array)
 
-# COmpute the log of total variation
+# Compute the log of total variation
 log_tv_to_disp_array = np.log(tv_to_disp_array)
+
+# Compute the log of profit
+log_profit_array = np.log(profit_array)
 
 
 # Plot normalized profit and stv_to_disp
@@ -47,4 +50,12 @@ for i in range(len(profit_array)):
 	plt.xlabel("log Total variation (20170413)")
 	plt.ylabel("Profit / openPrice (20170414)")
 plt.savefig("profit_normalized_to_log_indicator_"+data_date+".eps", format="eps")
+plt.close()
+
+# Plot
+for i in range(len(profit_array)):
+	plt.scatter(log_tv_to_disp_array[i], log_profit_array[i], color="r")
+	plt.xlabel("log Total variation (20170413)")
+	plt.ylabel("log Profit (20170414)")
+plt.savefig("log_profit_to_log_indicator_"+data_date+".eps", format="eps")
 plt.close()
