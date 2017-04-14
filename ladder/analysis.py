@@ -132,3 +132,6 @@ plt.close()
 #print(type(df.lastPrice.as_matrix()))
 #print(type(df.iloc[:]["lastPrice"]))
 #print(type(df.iloc[:].lastPrice))
+
+#print(df.iloc[-1]["closePrice"])
+#print(df.iloc[-1]["openPrice"])

@@ -6,7 +6,7 @@ ticker = "al1705" # contract symbol
 minPriceChange = 5 # minimum price change for the contract
 
 # debug mode: 1
-debug = 1
+debug = 0
 
 plot_start =0
 plot_end = 500
