@@ -2,7 +2,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import itertools
+import os
 from param import *
+
+# Create directory if not existed
+if not os.path.exists("./data_"+data_date+"/"):
+	os.makedirs("./data_"+data_date+"/")
 
 
 # Iterate over all the contracts

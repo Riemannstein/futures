@@ -2,7 +2,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import itertools
+import os
 from param import *
+
+if not os.path.exists("./plot_"+data_date+"/"):
+	os.makedirs("./plot_"+data_date+"/")
 
 profit_array = np.zeros(len(ticker_list)) # profit array
 open_price_array = np.zeros(len(ticker_list)) # open price array
@@ -168,5 +172,5 @@ for j in range(len(ticker_list)):
 	#print(df.iloc[-1]["closePrice"])
 	#print(df.iloc[-1]["openPrice"])
 	
-np.savetxt("profit_array_"+data_date+".txt", profit_array)
-np.savetxt("open_price_array_"+data_date+".txt", open_price_array)
+np.savetxt("./data/profit_array_"+data_date+".txt", profit_array)
+np.savetxt("./data/open_price_array_"+data_date+".txt", open_price_array)

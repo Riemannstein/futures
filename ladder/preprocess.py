@@ -4,31 +4,54 @@ import numpy as np
 import itertools
 from param import *
 
+# Data used for preprocessing, overide
 
+print("Data date is ", data_date_before)
 
-# Sum of the absolute value of the change in price
-tv = 0.0
+# Initialize tv_to_disp_array
+tv_to_disp_array = np.zeros(len(ticker_list))
 
-# Absolute value of the difference between close and open price 
-displacement = abs( df.iloc[-1]["closePrice"] - df.iloc[-1]["openPrice"] )
-print("Displacement of date ", df.iloc[-1]["dataDate"], " is ", displacement)
-
-
-# Compute the total variation to displacement ratio
-tv_to_disp = 0.0
-
-for i in range(len(df)):
-	if i == 0:
-		tv = 0.0
-	else:
-		tv += abs( df.iloc[i]["lastPrice"] - df.iloc[i-1]["lastPrice"] )
-
-print("The total variation of the lastPrice series is ", tv)
-
-if displacement == 0:
-	tv_to_disp = float("inf")
-else:
-	tv_to_disp = tv/float(displacement)
-
-print("Total variation to displacement ratio is ", tv_to_disp)
+for i in range(len(ticker_list)):
+	# Read the data
+	df = pd.read_csv("../data/tick_"+data_date_before+"/"+ticker_list[i]+"_"+data_date_before+".csv", encoding = "GBK")
 	
+	start_index = 0 # get the start index of the dataframe
+	
+	# Get the index of the first tick
+	for k in range(len(df)):
+		if df.iloc[k]["lowPrice"] != 0:
+			start_index = k
+			break
+
+	# Delete the first two rows
+	df = df.iloc[start_index:]
+	
+	# Sum of the absolute value of the change in price
+	tv = 0.0
+
+	# Absolute value of the difference between close and open price 
+	displacement = abs( df.iloc[-1]["closePrice"] - df.iloc[-1]["openPrice"] )
+	print("Displacement of ", df.iloc[0]["instrumentID"], " is ", displacement)	
+	
+	# Compute the total variation to displacement ratio
+	tv_to_disp = 0.0
+
+	for j in range(len(df)):
+		if j == 0:
+			tv = 0.0
+		else:
+			tv += abs( df.iloc[j]["lastPrice"] - df.iloc[j-1]["lastPrice"] )
+
+	print("The total variation of the lastPrice series is ", tv)
+
+	if displacement == 0:
+		tv_to_disp = float("inf")
+
+	else:
+		tv_to_disp = tv/float(displacement)
+	
+	tv_to_disp_array[i] = tv_to_disp
+
+np.savetxt("./data/tv_to_disp_array_"+data_date_before+".txt", tv_to_disp_array)
+
+

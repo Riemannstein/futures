@@ -5,8 +5,8 @@ import itertools
 from param import *
 
 # Data used for preprocessing, overide
-data_date = "20170413"
-print("Data date is ", data_date)
+
+print("Data date is ", data_date_before)
 
 # Initialize tv_to_disp_array
 tv_to_disp_array = np.zeros(len(ticker_list))
@@ -31,6 +31,7 @@ for i in range(len(ticker_list)):
 
 	# Absolute value of the difference between close and open price 
 	displacement = abs( df.iloc[-1]["closePrice"] - df.iloc[-1]["openPrice"] )
+	print("Displacement of ", df.iloc[0]["instrumentID"], " is ", displacement)	
 	
 	# Compute the total variation to displacement ratio
 	tv_to_disp = 0.0
@@ -45,11 +46,12 @@ for i in range(len(ticker_list)):
 
 	if displacement == 0:
 		tv_to_disp = float("inf")
+
 	else:
 		tv_to_disp = tv/float(displacement)
 	
 	tv_to_disp_array[i] = tv_to_disp
 
-np.savetxt("tv_to_disp_array_"+data_date+".txt", tv_to_disp_array)
+np.savetxt("./data/tv_to_disp_array_"+data_date_before+".txt", tv_to_disp_array)
 
 
