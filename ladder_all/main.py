@@ -315,26 +315,26 @@ for j in range(len(ticker_list)):
 						print("My updated ask price is ", my_ask)
 						print("My updated bid price is ", my_bid)
 							
-			## Detect trend
-			#if i >= num_adf:
-				#p_value = adfuller(df.iloc[i-num_adf:i+1]["lastPrice"])[1]
-				#print("p_value of the adf test is ", p_value)
-				## If there is a trend
-				#if p_value < p_threshold:
-					#print("A trend is detected")
-					## Cancel the order
-					#my_ask = float("inf")
-					#my_bid = -float("inf")
-					## Close all the position
-					#if len(position_stack) != 0:
-						## Compute the profit for closing positions
-						#if position_stack[-1] > 0: 
-							#profit_close[i] = sum(df.iloc[i]["lastPrice"] - position_stack)
-						#elif position_stack[-1] < 0:
-							#profit_close[i] = sum( -df.iloc[i]["lastPrice"] - position_stack)
-						## Close all the positions
-						#position_stack = np.array([])
-						#cum_profit += profit_close[i]
+			# Detect trend
+			if i >= num_adf:
+				p_value = adfuller(df.iloc[i-num_adf:i+1]["lastPrice"])[1]
+				print("p_value of the adf test is ", p_value)
+				# If there is a trend
+				if p_value < p_threshold:
+					print("A trend is detected")
+					# Cancel the order
+					my_ask = float("inf")
+					my_bid = -float("inf")
+					# Close all the position
+					if len(position_stack) != 0:
+						# Compute the profit for closing positions
+						if position_stack[-1] > 0: 
+							profit_close[i] = sum(df.iloc[i]["lastPrice"] - position_stack)
+						elif position_stack[-1] < 0:
+							profit_close[i] = sum( -df.iloc[i]["lastPrice"] - position_stack)
+						# Close all the positions
+						position_stack = np.array([])
+						cum_profit += profit_close[i]
 			
 			
 			# Update the book series
