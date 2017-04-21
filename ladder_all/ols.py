@@ -8,13 +8,13 @@ from statsmodels.tools.tools import add_constant
 from statsmodels.tsa.stattools import coint
 
 # Read profit array
-profit_array = np.loadtxt("./data/profit_array_"+data_date+".txt")
+profit_array = np.loadtxt("./data/profit_array_"+data_date+".txt", ndmin = 1)
 
 # Read the open price array
-open_price_array = np.loadtxt("./data/open_price_array_"+data_date+".txt")
+open_price_array = np.loadtxt("./data/open_price_array_"+data_date+".txt", ndmin = 1)
 
 # Read the tv_to_disp array
-tv_to_disp_array = np.loadtxt("./data/tv_to_disp_array_"+data_date_before+".txt")
+tv_to_disp_array = np.loadtxt("./data/tv_to_disp_array_"+data_date_before+".txt", ndmin = 1)
 
 # Compute the normalized profit array
 profit_normalized = np.divide(profit_array, open_price_array)
