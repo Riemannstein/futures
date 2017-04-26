@@ -65,9 +65,9 @@ for j in range(len(ticker_list)):
 	
 	for i in range(data_len):
 		
-		print("\nContract ID is", ticker_list[j])
-		print("\nTick number ",i)
-		print("Data time is ", df.iloc[i]["dataTime"])
+		#print("\nContract ID is", ticker_list[j])
+		#print("\nTick number ",i)
+		#print("Data time is ", df.iloc[i]["dataTime"])
 		print("System time is ", time.time())
 		unix_time = time.time()
 		
@@ -78,18 +78,18 @@ for j in range(len(ticker_list)):
 			# Place limited orders
 			my_bid = df.iloc[i]["bidPrice1"] 
 			my_ask = my_bid + my_spread
-			print("My bid price at time", df.iloc[i]["dataTime"], " is ", my_bid)
-			print("My ask price at time", df.iloc[i]["dataTime"], " is ", my_ask)
-			print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
-			print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
+			#print("My bid price at time", df.iloc[i]["dataTime"], " is ", my_bid)
+			#print("My ask price at time", df.iloc[i]["dataTime"], " is ", my_ask)
+			#print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
+			#print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
 			
 		else:	
 											
-			print("My bid price at previous tick is ", my_bid)
-			print("My ask price at previous tick is ", my_ask)
-			print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
-			print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
-			print("Last price of the current tick is", df.iloc[i]["lastPrice"])	
+			#print("My bid price at previous tick is ", my_bid)
+			#print("My ask price at previous tick is ", my_ask)
+			#print("Market bid price 1 at the current tick is ", df.iloc[i]["bidPrice1"])
+			#print("Market ask price 1 at the current tick is ", df.iloc[i]["askPrice1"])	
+			#print("Last price of the current tick is", df.iloc[i]["lastPrice"])	
 			
 			# Replace order if the trend is no longer present
 			if my_ask == float("inf"):
@@ -102,12 +102,12 @@ for j in range(len(ticker_list)):
 				# Trade condition for short using last price
 				if df.iloc[i]["lastPrice"] >= my_ask:
 					
-					print("lastPrice >=  my_ask")
-					print("Short at ", my_ask)
+					#print("lastPrice >=  my_ask")
+					#print("Short at ", my_ask)
 
 					# Update the position_stack
 					if len(position_stack) == 0:
-						print("Not holding any position previously, append ", -my_ask)
+						#print("Not holding any position previously, append ", -my_ask)
 						position_stack = np.hstack((position_stack, -my_ask))
 								
 						# Place limited order
@@ -116,64 +116,64 @@ for j in range(len(ticker_list)):
 						
 					# If previously long
 					elif position_stack[-1] > 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Calculate the profit
 						profit_tick[i] = my_ask - position_stack[-1]
 						profit = my_ask - position_stack[-1]
 						cum_profit += profit
-						print("Single profit is ", profit)
+						#print("Single profit is ", profit)
 						
 						# Pop back
 						position_stack = np.delete(position_stack,-1)
 						
 					# If previously short
 					elif position_stack[-1] < 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Append 
 						position_stack = np.hstack((position_stack, -my_ask))
-						print("Append short position: ", -my_ask)	
+						#print("Append short position: ", -my_ask)	
 						
 					# Place limited order
 					# If not holding any position	
 					if len(position_stack) == 0:
 						my_ask = df.iloc[i]["lastPrice"] + my_spread/2
 						my_bid = df.iloc[i]["lastPrice"] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 						
 					# If previously long
 					elif position_stack[-1] > 0:
 						my_ask = position_stack[-1] + my_spread/2
 						my_bid = position_stack[-1] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)				
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)				
 						
 						
 					# If previously short
 					elif position_stack[-1] < 0:
 						my_bid = -position_stack[-1] - my_spread/2
 						my_ask = -position_stack[-1] + my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)	
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)	
 				
 				# Trade condition for long using last price
 				elif df.iloc[i]["lastPrice"] <= my_bid:
 					
-					print("lastPrice <=  my_ask")
-					print("Long at ", my_bid)
+					#print("lastPrice <=  my_ask")
+					#print("Long at ", my_bid)
 					
 					# Update the position_stack
 					if len(position_stack) == 0:
-						print("Not holding any position previously, append", my_bid)
+						#print("Not holding any position previously, append", my_bid)
 						position_stack = np.hstack((position_stack, my_bid))
 										
 					# If previously short
 					elif position_stack[-1] < 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Calculate the profit
 						profit_tick[i] = -my_bid - position_stack[-1]
 						profit = -my_bid - position_stack[-1]
-						print("Single profit is ", profit)
+						#print("Single profit is ", profit)
 						cum_profit += profit
 						
 						# Pop back
@@ -181,60 +181,60 @@ for j in range(len(ticker_list)):
 						
 					# If previously long
 					elif position_stack[-1] > 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Append 
 						position_stack = np.hstack((position_stack, my_bid))
-						print("Append long position: ", my_bid)
+						#print("Append long position: ", my_bid)
 						
 					# Place limited order
 					# If not holding any position	
 					if len(position_stack) == 0:
 						my_ask = df.iloc[i]["lastPrice"] + my_spread/2
 						my_bid = df.iloc[i]["lastPrice"] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 						
 					# If previously long
 					elif position_stack[-1] > 0:
 						my_ask = position_stack[-1] + my_spread/2
 						my_bid = position_stack[-1] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)				
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)				
 						
 						
 					# If previously short
 					elif position_stack[-1] < 0:
 						my_bid = -position_stack[-1] - my_spread/2
 						my_ask = -position_stack[-1] + my_spread/2 
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 
 				# Trade condition for short using bid/ask
 				if df.iloc[i]["askPrice1"]  > my_ask:
 					
-					print("\naskPrice1 > my_ask")
-					print("Short at, ", my_ask)
+					#print("\naskPrice1 > my_ask")
+					#print("Short at, ", my_ask)
 					# Update the position_stack
 					if len(position_stack) == 0:
-						print("Not holding any position previously, append ", -my_ask)
+						#print("Not holding any position previously, append ", -my_ask)
 						position_stack = np.hstack((position_stack, -my_ask))		
 
 					# If previously short
 					elif position_stack[-1] < 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Append 
 						position_stack = np.hstack((position_stack, -my_ask))
-						print("Append short position: ", -my_ask)
+						#print("Append short position: ", -my_ask)
 						
 					# If previously long
 					elif position_stack[-1] > 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						
 						# Calculate the profit
 						profit_tick_ba[i] = my_ask - position_stack[-1]
 						profit = my_ask - position_stack[-1]
 						cum_profit += profit
-						print("Single profit is ", profit)
+						#print("Single profit is ", profit)
 						
 						# Pop back
 						position_stack = np.delete(position_stack,-1)
@@ -244,42 +244,42 @@ for j in range(len(ticker_list)):
 					if len(position_stack) == 0:
 						my_ask = df.iloc[i]["lastPrice"] + my_spread/2
 						my_bid = df.iloc[i]["lastPrice"] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 						
 					# If previously long
 					elif position_stack[-1] > 0:
 						my_ask = position_stack[-1] + my_spread/2
 						my_bid = position_stack[-1] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)				
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)				
 						
 						
 					# If previously short
 					elif position_stack[-1] < 0:
 						my_bid = -position_stack[-1] - my_spread/2
 						my_ask = -position_stack[-1] + my_spread/2 
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 				
 				# Trade condition for long usiing bid/ask
 				elif df.iloc[i]["bidPrice1"] < my_bid:
 				
-					print("\nbidPrice1 < my_bid")			
-					print("Long at ", my_bid)
+					#print("\nbidPrice1 < my_bid")			
+					#print("Long at ", my_bid)
 
 					# Update the position_stack
 					if len(position_stack) == 0:
-						print("Not holding any position previously, append ", my_bid)
+						#print("Not holding any position previously, append ", my_bid)
 						position_stack = np.hstack((position_stack, my_bid))
 						
 					# If previously short
 					elif position_stack[-1] < 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Calculate the profit
 						profit_tick_ba[i] = -my_bid - position_stack[-1]
 						profit = -my_bid - position_stack[-1]
-						print("Single profit is ", profit)
+						#print("Single profit is ", profit)
 						cum_profit += profit
 						
 						# Pop back
@@ -287,41 +287,41 @@ for j in range(len(ticker_list)):
 						
 					# If previously long
 					elif position_stack[-1] > 0:
-						print("Most recent trade is ", position_stack[-1])
+						#print("Most recent trade is ", position_stack[-1])
 						# Append 
 						position_stack = np.hstack((position_stack, my_bid))
-						print("Append long position: ", my_bid)
+						#rint("Append long position: ", my_bid)
 							
 					# Place limited order
 					# If not holding any position
 					if len(position_stack) == 0:
 						my_ask = df.iloc[i]["lastPrice"] + my_spread/2
 						my_bid = df.iloc[i]["lastPrice"] - my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 						
 					# If previously long
 					elif position_stack[-1] > 0:
 						my_ask = position_stack[-1] + my_spread
 						my_bid = position_stack[-1] - my_spread/2 
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)				
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)				
 						
 						
 					# If previously short
 					elif position_stack[-1] < 0:
 						my_bid = -position_stack[-1] - my_spread/2
 						my_ask = -position_stack[-1] + my_spread/2
-						print("My updated ask price is ", my_ask)
-						print("My updated bid price is ", my_bid)
+						#print("My updated ask price is ", my_ask)
+						#print("My updated bid price is ", my_bid)
 							
 			# Detect trend
 			if i >= num_adf:
 				p_value = adfuller(df.iloc[i-num_adf:i+1]["lastPrice"])[1]
-				print("p_value of the adf test is ", p_value)
+				#print("p_value of the adf test is ", p_value)
 				# If there is a trend
 				if p_value < p_threshold:
-					print("A trend is detected")
+					#print("A trend is detected")
 					# Cancel the order
 					my_ask = float("inf")
 					my_bid = -float("inf")
@@ -360,17 +360,17 @@ for j in range(len(ticker_list)):
 						cum_profit += sum( -position_stack - df.iloc[-1]["lastPrice"])	
 						profit_close[i] = sum( -position_stack- df.iloc[-1]["lastPrice"] )		
 							
-			# Print
-			if len(position_stack) == 0:
-				print("\nNot holding any position at the end of tick ", i)
-			else:
-				print("\nPosition(s) held at the end of tick ", i, "is ", position_stack)
-			print("Book value at the end of tick ", i, "is", book[i])
+			## Print
+			#if len(position_stack) == 0:
+				#print("\nNot holding any position at the end of tick ", i)
+			#else:
+				#print("\nPosition(s) held at the end of tick ", i, "is ", position_stack)
+			#print("Book value at the end of tick ", i, "is", book[i])
 			
-			# Print the cumulative tick profit
-			print("Cumulative tick profit is ", cum_profit)
-			print("Cumulativ profit from profit_tick is ", sum(profit_tick))
-			print("Cumulativ profit from profit_tick_ba is ", sum(profit_tick_ba))
+			## Print the cumulative tick profit
+			#print("Cumulative tick profit is ", cum_profit)
+			#print("Cumulativ profit from profit_tick is ", sum(profit_tick))
+			#print("Cumulativ profit from profit_tick_ba is ", sum(profit_tick_ba))
 
 			
 			
@@ -385,8 +385,8 @@ for j in range(len(ticker_list)):
 			print("Time used for this tick is ", time.time()- unix_time)
 
 					
-		if debug == 1:
-			print("Position stack is ", position_stack)
+		#if debug == 1:
+			#print("Position stack is ", position_stack)
 
 			
 	# Save data for analysis
