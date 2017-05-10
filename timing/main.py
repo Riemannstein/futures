@@ -46,4 +46,38 @@ for j in range(len(ticker_list)):
 	# Get the minimum price change
 	minPriceChange = contract.iloc[0]["minChgPriceNum"]
 	print("minPriceChange for contract", ticker_list[j], "is ", minPriceChange)
+	
+	# Initialize state variables
+	book = np.zeros(len(df))
+	profit_cum = 0.0
 
+	# Initialize the MAs
+	sma_short = sma(df["lastPrice"][period_long - period_short : period_long].as_matrix())
+	print(sma_short)
+	
+	sma_long = sma(df["lastPrice"][0 : period_long].as_matrix())
+	print(sma_long)
+
+	# Intitialize position
+	position = 0.0
+	if sma_short >= sma_long:
+		position = df["lastPrice"][period_long]
+	else:
+		position = -df["lastPrice"][period_long]
+
+
+	
+	# Iterate over every period
+	for i in range(period_long, data_len):
+		sma_short = sma(df["lastPrice"][ i - period_short : i].as_matrix())
+		sma_long = sma(df["lastPrice"][ i - period_long : i].as_matrix())
+
+		# Calculate the last price
+		lastPrice = df.iloc[i]["lastPrice"]
+
+		# Adjust position 
+		position,profit_cum = process_tick(sma_short, sma_long, lastPrice, position, profit_cum )
+		#print(position)
+
+	print("Final profit is ", profit_cum)
+  

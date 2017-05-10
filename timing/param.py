@@ -9,16 +9,16 @@ debug = 0
 debug_contract = 1
 
 # data length for debug mode
-data_len_debug = 10
+data_len_debug = 100
 
 # Threshold for pvalue of adf test
 p_threshold = 0.05
 
 # Number of periods used for the computation of long sma
-period_long = 40
+period_long = 200
 
 # Number of periods used for the computation of short sma
-period_short = 10 
+period_short = 50 
 
 # ticker lists
 ticker_list_shfe = ["ag1706", "al1706", "au1706", "bu1706", "cu1706",  "hc1710", "ni1709", "pb1705", "rb1710", "ru1709", "sn1705", "zn1706"]
@@ -49,3 +49,4 @@ k = int(2) # times of minimum price change
 ## Get the spread series
 #spread1 = df.iloc[0:]["askPrice1"].as_matrix() - df.iloc[0:]["bidPrice1"].as_matrix()
 #print("My spread is ", my_spread)
+
